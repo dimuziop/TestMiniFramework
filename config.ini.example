@@ -1,0 +1,9 @@
+[App]
+App[name] = appname
+App[baseurl] = baseurl
+
+[Database]
+Database[server_name] = host
+Database[db_name] = database
+Database[username] = username
+Database[password] = password
