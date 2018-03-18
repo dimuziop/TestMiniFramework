@@ -13,7 +13,7 @@ class JsonResponse
 {
     protected $response;
     protected $header;
-    public function __construct($response, String $header)
+    public function __construct($response, String $header = 'HTTP/1.1 200 OK')
     {
         $this->setResponse($response);
         $this->setHeader($header);

@@ -8,6 +8,7 @@
 
 namespace App\Routes;
 
+use App\Controllers\Product;
 use Sb\Components\Router\Routes;
 
 /**
@@ -17,24 +18,20 @@ use Sb\Components\Router\Routes;
 */
 
 $routes = new Routes($router);
+$productController = new Product();
 
 $routes->get('/', function (){
     return 'Hello';
-})->get('/products', function(){
-    echo 'The Products';
-    return 'the products';
-})->get('/product/:id', function($id){
-    echo $id;
-    return 'the products';
-})->post('/product', function(){
-    echo 'Store';
-    return 'Store Product';
-})->put('/product/:id', function ($id){
-    echo $id;
-    return 'put the product';
-})->delete('/product/:id', function ($id){
-    echo $id;
-    return 'delete the product';
+})->get('/products', function() use($productController){
+    $productController->getAll();
+})->get('/product/:id', function($id) use($productController){
+    $productController->get($id);
+})->post('/product', function() use($productController){
+    $productController->store();
+})->put('/product/:id', function ($id)use($productController){
+    $productController->updates($id);
+})->delete('/product/:id', function ($id) use($productController){
+    $productController->delete($id);
 });
 
 

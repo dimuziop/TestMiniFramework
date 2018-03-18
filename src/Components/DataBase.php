@@ -16,7 +16,7 @@ class DataBase
     {
         $data = self::getParameters();
         try {
-            $conn = new \PDO("mysql:host={$data['server_name']};{$data['db_name']}",
+            $conn = new \PDO("mysql:host={$data['server_name']};dbname={$data['db_name']}",
                 $data['username'], $data['password']);
             $conn->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
             return $conn;
