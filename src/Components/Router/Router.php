@@ -11,17 +11,22 @@ namespace Sb\Components\Router;
 
 use Sb\Components\Cleaners\UriMaker;
 use Sb\Components\Helpers\ArrayHelpers;
+use Sb\Components\JsonResponse;
 
 class Router
 {
     
     protected $requesturi;
     
+    protected $uriParams = [];
+    
     protected $verb;
     
     protected $loader;
     
     protected $routeCollection = [];
+    
+    protected $matchedRoute;
     
     
     public function __construct($loader)
@@ -67,8 +72,50 @@ class Router
     {
         $this->filterRoutes();
         $this->routesCutterAndActions();
-        $this->requestMatches();
+        $this->validOrFail($this->requestMatches());
         
+    }
+    
+    protected function execute($param = null){
+        if($param === null){
+            $this->matchedRoute['function']();
+        }else{
+            $this->matchedRoute['function']($param);
+        }
+    }
+    
+    protected function validOrFail($route){
+        if ($route !== null) {
+            $this->matchedRoute = $route;
+            if(!$this->requieresParameters()){
+                $this->execute();
+            }else{
+                $this->execute($this->getItems());
+            }
+        } else {
+            $response = new JsonResponse(
+                [
+                    'Error' => 'Sorry, resource you try to access does not exists',
+                ],
+                $_SERVER['SERVER_PROTOCOL'] . ' 404 Not found',
+                true,
+                404);
+            $response->response();
+        }
+    }
+    
+    protected function requieresParameters()
+    {
+        $reflection = new \ReflectionFunction($this->matchedRoute['function']);
+        return $reflection->getNumberOfRequiredParameters() >= 1;
+    }
+    
+    /*
+     * It needs refactoring to bind all the parameters of the uri
+     */
+    protected function getItems(){
+        $params = ArrayHelpers::getParamsOfClosure($this->matchedRoute['exploited_uri']);
+        return $this->uriParams[0];
     }
     
     /*
@@ -80,16 +127,16 @@ class Router
     }
     
     /*
-     * Filters emptys in array and makes an array from the request uri
+     * Filters emptys in array and makes an array from the request uri and let the params
      */
     protected function requestMatches()
     {
-        $uri = str_replace(API_NAME, '', $this->getRequesturi());
-        $exploit = ArrayHelpers::removeEmptys(explode('/', $uri));
-        foreach ($exploit as $item){
-            var_dump($item);
-        }
-        
+        $uri            = str_replace(API_NAME, '', $this->getRequesturi());
+        $requestedRoute = ArrayHelpers::removeEmptys(explode('/', $uri));
+        $this->uriParams = $requestedRoute;
+        array_shift($this->uriParams);
+        return ArrayHelpers::searchMeInRoutesArray($this->routeCollection,
+            $requestedRoute);
     }
     
     /*

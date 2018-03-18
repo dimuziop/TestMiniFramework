@@ -37,17 +37,30 @@ class ArrayHelpers
         }
         return $var;
     }
-    
+    /*
+     * Returns the matched route request TODO: Needs refactorization, many loops.
+     * TellDontAsk principle must be applied
+     */
     public static function searchMeInRoutesArray($array, $me)
     {
-        if($me === '/'){
-        
+        foreach ($me as $value){
+            foreach ($array as $route){
+                if(is_array($route['exploited_uri'])){
+                    foreach ($route['exploited_uri'] as $frag){
+                        if($frag === $value){
+                            return $route;
+                        }
+                    }
+                }
+            }
         }
-        var_dump($array, $me);
-        $regme = sprintf('/'.$me.'/');
-        array_filter($array, function ($var) use ($regme) {
-            return preg_match($regme, $var);
-        });
+    }
+    
+    public static function getParamsOfClosure($items){
+        foreach ($items as $param){
+            $params[] = strstr($param, ':') ? strstr($param, ':') : null ;
+        }
+        return self::removeEmptys($params);
     }
     
 }

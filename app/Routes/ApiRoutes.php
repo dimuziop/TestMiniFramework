@@ -21,14 +21,19 @@ $routes = new Routes($router);
 $routes->get('/', function (){
     return 'Hello';
 })->get('/products', function(){
+    echo 'The Products';
     return 'the products';
 })->get('/product/:id', function($id){
+    echo $id;
     return 'the products';
 })->post('/product', function(){
+    echo 'Store';
     return 'Store Product';
 })->put('/product/:id', function ($id){
+    echo $id;
     return 'put the product';
 })->delete('/product/:id', function ($id){
+    echo $id;
     return 'delete the product';
 });
 
