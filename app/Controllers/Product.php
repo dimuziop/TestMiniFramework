@@ -18,19 +18,9 @@ class Product
     
     public function getAll()
     {
-        session_start();
-        var_dump($_SESSION['client']->auth());
-        die();
-        if (isset($_SESSION['access_token'])) {
-            $_SESSION['GC']->setAccessToken($_SESSION['access_token']);
-            $product  = new ProductModel();
-            $response = new JsonResponse($product->getAll());
-            $response->response();
-        }else{
-            $redirect = BASE_URL . 'login/';
-            header("Location: {$redirect}");
-        }
-        
+        $product  = new ProductModel();
+        $response = new JsonResponse($product->getAll());
+        $response->response();
     }
     
     public function get($id)
@@ -43,7 +33,7 @@ class Product
     public function store()
     {
         session_start();
-        if (isset($_SESSION['access_data'])) {
+        if (isset($_SESSION['token']) && password_verify(json_encode($_SESSION['token']), $_POST['token'])) {
             $sanitizedPost = array_map(function ($var) {
                 return filter_var($var, FILTER_SANITIZE_STRING);
             }, $_POST);
@@ -54,23 +44,38 @@ class Product
                     ->setCost($sanitizedPost['cost'])
                     ->store($product);
             die();
+        }else {
+            $redirect = BASE_URL . 'login/';
+            header("Location: {$redirect}");
         }
-        $redirect = BASE_URL . 'login/';
-        header("Location: {$redirect}");
     }
     
     public function delete($id)
     {
+        session_start();
+        if (isset($_SESSION['token']) && password_verify(json_encode($_SESSION['token']), $_POST['token'])) {
         $product = new ProductModel();
         $product->delete($id);
         $redirect = BASE_URL . 'products/';
         header("Location: {$redirect}");
+        }else {
+            $redirect = BASE_URL . 'login/';
+            header("Location: {$redirect}");
+        }
     }
     
     public function updates($id)
     {
+        session_start();
+        if (isset($_SESSION['token'])) {
         $input   = JsonInputs::getArrayFromJson();
-        $product = new ProductModel();
-        $product->updates($id, $input);
+            if(password_verify(json_encode($_SESSION['token']), $input['token'])){
+                $product = new ProductModel();
+                $product->updates($id, $input);
+            }
+        }else {
+            $redirect = BASE_URL . 'login/';
+            header("Location: {$redirect}");
+        }
     }
 }

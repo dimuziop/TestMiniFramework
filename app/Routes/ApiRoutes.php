@@ -17,7 +17,7 @@ use Sb\Components\Router\Routes;
  * to pass any kind of middleware to manage another complex situations, this using of the instantiation
  * is for demostration purpose only;
 */
-
+session_start();
 $routes = new Routes($router);
 $productController = new Product();
 $loginController = new Login();
@@ -38,9 +38,9 @@ $routes->get('/products', function() use($productController){
 $routes->get('/login', function() use($loginController){
     $loginController->login();
 })->get('/login-callback', function() use($loginController, $router) {
-    $loginController->callback($router->getGetVariables());
-})->get('/demo-purpose-get-data-login', function() use($loginController) {
-    $loginController->getData();
+    $loginController->callback($router->getGetVariables() !== null ? $router->getGetVariables() : null);
+})->get('/getToken', function() use($loginController) {
+    $loginController->getToken();
 });
 
 

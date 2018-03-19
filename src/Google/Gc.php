@@ -11,33 +11,31 @@ namespace Sb\Google;
 class Gc
 {
     
+    protected static $client;
     
-    public function __construct()
+    public static function make()
     {
-        session_start();
         $data = parse_ini_file(__DIR__ . '/../../config.ini');
-        $client = new \Google_Client();
-        $client->setApplicationName('SatoshiTangoTest');
-        $client->setClientId($data['Google']['cient_id']);
-        $client->setClientSecret($data['Google']['secret']);
-        $client->addScope('https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/plus.login');
-        $client->setRedirectUri(BASE_URL . 'login-callback');
-        $_SESSION['GC'] = $client;
-    }
-    
-    public function getUrlLogin()
-    {
-        return $_SESSION['GC']->createAuthUrl();
-    }
-    
-    public function auth($data = null){
-        if(isset($data)){
-            $_SESSION['access_token'] = $_SESSION['GC']->authenticate($data);
-        }else if(isset($_SESSION['access_token'])){
-            $_SESSION['GC']->setAccessToken($_SESSION['access_token']);
-        }else{
-            $redirect = BASE_URL . 'login/';
-            header("Location: {$redirect}");
+        if(self::$client === null) {
+            self::$client = new \Google_Client();
         }
+        self::$client->setApplicationName('SatoshiTangoTest');
+        self::$client->setClientId($data['Google']['cient_id']);
+        self::$client->setClientSecret($data['Google']['secret']);
+        self::$client->addScope(\Google_Service_Oauth2::USERINFO_PROFILE);
+        self::$client->addScope(\Google_Service_Oauth2::USERINFO_EMAIL);
+        self::$client->setRedirectUri(BASE_URL . 'login-callback');
+    }
+    
+    public static function getUrlLogin()
+    {
+        self::make();
+        return self::$client->createAuthUrl();
+    }
+    
+    public static function auth($data = null){
+        self::make();
+        self::$client->authenticate($_GET['code']);
+        $_SESSION['token'] = self::$client->getAccessToken();
     }
 }
