@@ -30,7 +30,14 @@ class Gc
         return $_SESSION['GC']->createAuthUrl();
     }
     
-    public function fetchAccess($data){
-        return $_SESSION['GC']->fetchAccessTokenWithAuthCode($data);
+    public function auth($data = null){
+        if(isset($data)){
+            $_SESSION['access_token'] = $_SESSION['GC']->authenticate($data);
+        }else if(isset($_SESSION['access_token'])){
+            $_SESSION['GC']->setAccessToken($_SESSION['access_token']);
+        }else{
+            $redirect = BASE_URL . 'login/';
+            header("Location: {$redirect}");
+        }
     }
 }

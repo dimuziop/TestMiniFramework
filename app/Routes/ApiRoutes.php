@@ -39,6 +39,8 @@ $routes->get('/login', function() use($loginController){
     $loginController->login();
 })->get('/login-callback', function() use($loginController, $router) {
     $loginController->callback($router->getGetVariables());
+})->get('/demo-purpose-get-data-login', function() use($loginController) {
+    $loginController->getData();
 });
 
 

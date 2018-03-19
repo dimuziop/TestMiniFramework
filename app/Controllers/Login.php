@@ -23,8 +23,15 @@ class Login
         session_start();
         if(isset($data)){
             $data = substr($data, 5);
-            $_SESSION['access_data'] = $_SESSION['client']->fetchAccess($data);
+            $_SESSION['client']->auth($data);
             header('Location:' . BASE_URL . 'products');
+            die();
         }
+    }
+    
+    public function getData(){
+        session_start();
+        var_dump($_SESSION);
+        die();
     }
 }
