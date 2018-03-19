@@ -41,6 +41,8 @@ $routes->get('/login', function() use($loginController){
     $loginController->callback($router->getGetVariables() !== null ? $router->getGetVariables() : null);
 })->get('/getToken', function() use($loginController) {
     $loginController->getToken();
+})->get('/logout', function() use($loginController) {
+    $loginController->logout();
 });
 
 

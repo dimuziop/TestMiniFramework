@@ -38,4 +38,8 @@ class Gc
         self::$client->authenticate($_GET['code']);
         $_SESSION['token'] = self::$client->getAccessToken();
     }
+    public static function logout(){
+        self::make();
+        self::$client->revokeToken();
+    }
 }

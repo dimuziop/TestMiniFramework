@@ -8,6 +8,7 @@
 
 namespace App\Controllers;
 
+use Sb\Components\JsonResponse;
 use Sb\Google\Gc;
 
 class Login
@@ -24,7 +25,7 @@ class Login
         if (isset($data)) {
             $data = substr($data, 5);
             Gc::auth($data);
-            header('Location:' . BASE_URL . 'products');
+            header('Location:' . BASE_URL . 'getToken');
             die();
         }
     }
@@ -36,11 +37,18 @@ class Login
                 PASSWORD_BCRYPT, [
                     'cost' => 12,
                 ]);
-            var_dump(password_verify(json_encode($_SESSION['token']), $hash));
-            die();
+            $response = new JsonResponse($hash);
+            $response->response();
         }else{
             header('Location:' . BASE_URL . 'login');
             die();
         }
+    }
+    
+    public function logout(){
+        unset($_SESSION['token']);
+        Gc::logout();
+        header('Location:' . BASE_URL . 'products');
+        die();
     }
 }
