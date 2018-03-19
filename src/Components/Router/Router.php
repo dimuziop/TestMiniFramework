@@ -28,6 +28,8 @@ class Router
     
     protected $matchedRoute;
     
+    protected $getVariables;
+    
     
     public function __construct($loader)
     {
@@ -132,11 +134,21 @@ class Router
     protected function requestMatches()
     {
         $uri            = str_replace(API_NAME, '', $this->getRequesturi());
+        $uri = $this->getGetVariablesIfHas($uri);
         $requestedRoute = ArrayHelpers::removeEmptys(explode('/', $uri));
         $this->uriParams = $requestedRoute;
         array_shift($this->uriParams);
         return ArrayHelpers::searchMeInRoutesArray($this->routeCollection,
             $requestedRoute);
+    }
+    
+    protected function getGetVariablesIfHas($uri){
+        if(strpos($uri, '?') === false){
+            return $uri;
+        }
+        $vars = ArrayHelpers::removeEmptys(explode('?', $uri));
+        $this->getVariables = $vars[1];
+        return $vars[0];
     }
     
     /*
@@ -179,5 +191,21 @@ class Router
     protected function setVerb($verb)
     {
         $this->verb = $verb;
+    }
+    
+    /**
+     * @return mixed
+     */
+    public function getGetVariables()
+    {
+        return $this->getVariables;
+    }
+    
+    /**
+     * @param mixed $getVariables
+     */
+    public function setGetVariables($getVariables)
+    {
+        $this->getVariables = $getVariables;
     }
 }

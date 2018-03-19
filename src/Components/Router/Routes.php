@@ -62,6 +62,14 @@ class Routes
         return $this;
     }
     
+    /**
+     * @return mixed
+     */
+    public function getGetVariables()
+    {
+        return $this->router->getGetVariables();
+    }
+    
     protected function store($route){
         $this->router->store($route);
     }

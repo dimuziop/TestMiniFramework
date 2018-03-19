@@ -24,5 +24,7 @@
             "Tests\\": "tests/"
         }
     },
-    "require": {}
+    "require": {
+        "google/apiclient": "^2.0"
+    }
 }

@@ -8,6 +8,7 @@
 
 namespace App\Routes;
 
+use App\Controllers\Login;
 use App\Controllers\Product;
 use Sb\Components\Router\Routes;
 
@@ -19,10 +20,10 @@ use Sb\Components\Router\Routes;
 
 $routes = new Routes($router);
 $productController = new Product();
+$loginController = new Login();
 
-$routes->get('/', function (){
-    return 'Hello';
-})->get('/products', function() use($productController){
+
+$routes->get('/products', function() use($productController){
     $productController->getAll();
 })->get('/product/:id', function($id) use($productController){
     $productController->get($id);
@@ -32,6 +33,12 @@ $routes->get('/', function (){
     $productController->updates($id);
 })->delete('/product/:id', function ($id) use($productController){
     $productController->delete($id);
+});
+
+$routes->get('/login', function() use($loginController){
+    $loginController->login();
+})->get('/login-callback', function() use($loginController, $router) {
+    $loginController->callback($router->getGetVariables());
 });
 
 
