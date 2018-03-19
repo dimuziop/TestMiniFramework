@@ -29,7 +29,7 @@ class Model
         $stmt = $this->getPdo()->query($sql);
         /*$stmt->bindValue(':table', $this->tableName);
         $stmt->execute();*/
-        return $stmt->fetch();
+        return $stmt->fetch(\PDO::FETCH_ASSOC);
     }
     
     public function getAll()
@@ -38,7 +38,7 @@ class Model
         $stmt = $this->getPdo()->query($sql);
         /*$stmt->bindValue(':table', $this->tableName);
         $stmt->execute();*/
-        return $stmt->fetchAll();
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
     
     public function store($child)
