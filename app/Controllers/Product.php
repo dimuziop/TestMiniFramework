@@ -67,12 +67,10 @@ class Product
     public function updates($id)
     {
         session_start();
-        if (isset($_SESSION['token'])) {
         $input   = JsonInputs::getArrayFromJson();
-            if(password_verify(json_encode($_SESSION['token']), $input['token'])){
+        if (isset($_SESSION['token']) && password_verify(json_encode($_SESSION['token']), $input['token'])) {
                 $product = new ProductModel();
                 $product->updates($id, $input);
-            }
         }else {
             $redirect = BASE_URL . 'login/';
             header("Location: {$redirect}");

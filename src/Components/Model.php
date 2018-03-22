@@ -59,6 +59,7 @@ class Model
     
     public function updates($id, $data)
     {
+        array_pop($data);
         $sql           = "SELECT * FROM {$this->tableName} WHERE {$this->prefix}_id = {$id}";
         $stmt          = $this->getPdo()->query($sql);
         $productFromDb = $stmt->fetch();
